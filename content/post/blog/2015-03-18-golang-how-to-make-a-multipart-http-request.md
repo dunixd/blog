@@ -33,8 +33,14 @@ func newMultipartRequest(url string, params map[string]string) (*http.Request, e
 	for key, val := range params {
 		_ = writer.WriteField(key, val)
 	}
+	contentType := writer.FormDataContentType()
 	writer.Close()
-	return http.NewRequest("POST", url, body)
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return req, err
+	}
+	req.Header.Set("Content-Type", contentType)
+	return req, err
 }
 
 func main() {
